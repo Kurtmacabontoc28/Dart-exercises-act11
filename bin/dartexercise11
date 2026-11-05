@@ -1,0 +1,57 @@
+class CourseTask {
+  String taskTitle;
+  String courseCode;
+
+  CourseTask(this.taskTitle, this.courseCode);
+
+  void displayDetails() {
+    print('Task: $taskTitle | Course: $courseCode');
+  }
+}
+
+class MobileDevTask extends CourseTask {
+  int weekNumber;
+  bool isSubmitted;
+
+  MobileDevTask(String taskTitle, String courseCode, this.weekNumber)
+    : isSubmitted = false,
+      super(taskTitle, courseCode);
+
+  Future<String> saveSubmissionToCloud() async {
+    print('  -> [Cloud Server] Upload started for "$taskTitle"...');
+
+    await Future.delayed(const Duration(seconds: 2));
+
+    isSubmitted = true;
+    return '  -> [Cloud Server] SUCCESS: "$taskTitle" saved to server database.';
+  }
+}
+
+void main() async {
+  print('=== FEUNRMF PC16 - Week 11 Asynchronous Dart Program ===\n');
+
+  MobileDevTask myAssignment = MobileDevTask(
+    'Week 11: Asynchronous Programming in Dart',
+    'PC16',
+    11,
+  );
+
+  myAssignment.displayDetails();
+  print('Status before save: Submitted = ${myAssignment.isSubmitted}\n');
+
+  print('[Log 1] Triggering asynchronous cloud save...');
+
+  Future<String> saveFuture = myAssignment.saveSubmissionToCloud();
+
+  print(
+    '[Log 2] PROOF OF NON-BLOCKING: Main thread continues while saving in background!',
+  );
+  print('[Log 3] Waiting for cloud response...');
+  String serverResponse = await saveFuture;
+
+  print('[Log 4] Response received:');
+  print(serverResponse);
+  print('Status after save: Submitted = ${myAssignment.isSubmitted}');
+
+  print('\n=== Program Finished ===');
+}
